@@ -4,8 +4,10 @@ class TextGenerator
 {
     public static $words, $symbols, $symbols_pronouns, $question_words, $popular_verbs;
 
-    public function initialize( $lang = 'eng')
+    public function initialize()
     {
+        $lang = isset($_REQUEST['lang'])?$_REQUEST['lang']:'eng';
+        if (!file_exists($lang)) $lang = 'eng';
         self::$words = explode("\n", file_get_contents($lang.'/words.txt'));
         self::$symbols_pronouns = explode("\n", file_get_contents($lang.'/pronouns.txt'));
         self::$question_words = explode("\n", file_get_contents($lang.'/question_words.txt'));
@@ -64,7 +66,7 @@ class TextGenerator
             $r = rand(0, 100);
             if ($r < 80 && $c_sent!=1 ) {
                 $sentence .= '<br/>';
-            } else $sentence .= ' ';
+            } elseif ($c_sent>1) $sentence .= ' ';
 
             $sentences[] = $sentence;
         }
@@ -83,7 +85,7 @@ class TextGenerator
     }
 }
 
-TextGenerator::initialize('rus');
+TextGenerator::initialize();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -124,13 +126,18 @@ TextGenerator::initialize('rus');
                 }
                 ?>
             </div><!--/row-->
+            <div class="jumbotron">
+                <h1>Message example</h1>
+               <p style="text-align: justify;"><?=TextGenerator::generateRandomSentences(rand(5,12),rand(3,7));?></p>
+                <p><a class="btn btn-primary btn-lg" href="#" role="button"><?=TextGenerator::generateRandomSentences(1,1);?></a></p>
+            </div>
         </div><!--/.col-xs-12.col-sm-9-->
     </div><!--/row-->
 
     <hr>
 
     <footer>
-        <p>&copy; 2016 Company, Inc.</p>
+        <p>&copy; 2016 Company "<?=TextGenerator::generateRandomSentences(1,1);?>", Inc.</p>
     </footer>
 
 </div>
