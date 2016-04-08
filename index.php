@@ -114,7 +114,7 @@ TextGenerator::initialize();
             </div>
             <div class="row">
                 <?php
-                for ($i=1;$i<=6;$i++)
+                for ($i=1;$i<=3;$i++)
                 {
                     ?>
                     <div class="col-xs-6 col-lg-4">
@@ -131,6 +131,20 @@ TextGenerator::initialize();
                <p style="text-align: justify;"><?=TextGenerator::generateRandomSentences(rand(5,12),rand(3,7));?></p>
                 <p><a class="btn btn-primary btn-lg" href="#" role="button"><?=TextGenerator::generateRandomSentences(1,1);?></a></p>
             </div>
+            <div class="row">
+                <?php
+                for ($i=1;$i<=3;$i++)
+                {
+                    ?>
+                    <div class="col-xs-6 col-lg-4">
+                        <h2><?=TextGenerator::generateRandomHeader();?></h2>
+                        <?=TextGenerator::generateRandomSentences(5,5);?>
+                        <p><a role="button" href="#" class="btn btn-default"><?=TextGenerator::generateRandomSentences(1,1);?> »</a></p>
+                    </div>
+                <?php
+                }
+                ?>
+            </div><!--/row-->
         </div><!--/.col-xs-12.col-sm-9-->
     </div><!--/row-->
 
