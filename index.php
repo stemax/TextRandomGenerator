@@ -2,16 +2,20 @@
 
 class TextGenerator
 {
-    public static $words, $symbols, $symbols_pronouns, $question_words, $popular_verbs;
+    public static $lang, $words, $symbols, $symbols_pronouns, $question_words, $popular_verbs, $male_firstnames, $female_firstnames, $surnames;
 
     public function initialize()
     {
         $lang = isset($_REQUEST['lang']) ? $_REQUEST['lang'] : 'eng';
         if (!file_exists($lang)) $lang = 'eng';
+        self::$lang = $lang;
         self::$words = explode("\n", file_get_contents($lang . '/words.txt'));
         self::$symbols_pronouns = explode("\n", file_get_contents($lang . '/pronouns.txt'));
         self::$question_words = explode("\n", file_get_contents($lang . '/question_words.txt'));
         self::$popular_verbs = explode("\n", file_get_contents($lang . '/popular_verbs.txt'));
+        self::$male_firstnames = explode("\n", file_get_contents($lang . '/male_firstnames.txt'));
+        self::$female_firstnames = explode("\n", file_get_contents($lang . '/female_firstnames.txt'));
+        self::$surnames = explode("\n", file_get_contents($lang . '/surnames.txt'));
     }
 
     public function generateRandomSentences($c_sent = 5, $c_words = 0)
@@ -88,7 +92,7 @@ class TextGenerator
     public static function generateRandomString($length = 10, $spec = false)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        if ($spec) $characters .= '.,+-()*&^%$#@!;';
+        if ($spec) $characters .= '.+-()*&^%$#@!;';
         $charactersLength = strlen($characters);
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {
@@ -96,6 +100,77 @@ class TextGenerator
         }
         return $randomString;
     }
+
+    public static function generateFirstName($gender='Male')
+    {
+        if ($gender=='Male')
+        {
+            return ucfirst(strtolower(self::$male_firstnames[rand(0, count(self::$male_firstnames) - 1)]));
+        }else
+        {
+            return ucfirst(strtolower(self::$female_firstnames[rand(0, count(self::$female_firstnames) - 1)]));
+        }
+    }
+
+    public static function generateLastName($gender='Male')
+    {
+        $surname = trim(ucfirst(strtolower(self::$surnames[rand(0, count(self::$surnames) - 1)])));
+        if (self::$lang=='rus' && $gender=='Female')
+        {
+            $surname.='а';
+        }
+        return $surname;
+    }
+
+    public static function generateYearsOld($min=18, $max=91)
+    {
+        return rand($min,$max);
+    }
+
+    public static function generateBirthday($age)
+    {
+        $bd_year = date('Y') - $age;
+        $bd_month = sprintf('%02d',rand(1,12));
+        $bd_day = sprintf('%02d',rand(1,28));
+        return $bd_year.'-'.$bd_month.'-'.$bd_day;
+    }
+
+    public static function generateEmail($firstname, $lastname, $birthday)
+    {
+        return self::generateLogin($firstname, $lastname, $birthday).'@gmail.com';
+    }
+
+    public static function generateLogin($firstname, $lastname, $birthday)
+    {
+        if (self::$lang=='rus') {
+            $firstname = self::translitRusText($firstname);
+            $lastname = self::translitRusText($lastname);
+        }
+        $login = strtolower(trim(substr($firstname,0,7)).(rand(0,1)?'.':'.').trim((substr($lastname,0,9))).(rand(0,1)?'.':'.').trim(str_replace('-','',$birthday)));
+        return $login;
+    }
+
+    public static function translitRusText($str)
+    {
+        $tr = array(
+            "А"=>"A","Б"=>"B","В"=>"V","Г"=>"G",
+            "Д"=>"D","Е"=>"E","Ё"=>"E","Ж"=>"J","З"=>"Z","И"=>"I",
+            "Й"=>"Y","К"=>"K","Л"=>"L","М"=>"M","Н"=>"N",
+            "О"=>"O","П"=>"P","Р"=>"R","С"=>"S","Т"=>"T",
+            "У"=>"U","Ф"=>"F","Х"=>"H","Ц"=>"TS","Ч"=>"CH",
+            "Ш"=>"SH","Щ"=>"SCH","Ъ"=>"","Ы"=>"YI","Ь"=>"",
+            "Э"=>"E","Ю"=>"YU","Я"=>"YA","а"=>"a","б"=>"b",
+            "в"=>"v","г"=>"g","д"=>"d","е"=>"e","ё"=>"e","ж"=>"j",
+            "з"=>"z","и"=>"i","й"=>"y","к"=>"k","л"=>"l",
+            "м"=>"m","н"=>"n","о"=>"o","п"=>"p","р"=>"r",
+            "с"=>"s","т"=>"t","у"=>"u","ф"=>"f","х"=>"h",
+            "ц"=>"ts","ч"=>"ch","ш"=>"sh","щ"=>"sch","ъ"=>"y",
+            "ы"=>"yi","ь"=>"","э"=>"e","ю"=>"yu","я"=>"ya"
+        );
+        return strtr($str,$tr);
+    }
+
+
 }
 
 TextGenerator::initialize();
@@ -121,7 +196,8 @@ TextGenerator::initialize();
 
     <div class="row row-offcanvas row-offcanvas-right">
 
-        <div class="col-xs-12 col-sm-9">
+        <div class="col-xs-12 col-sm-12">
+            <?php /**/ ?>
             <div class="jumbotron">
                 <h1>Text Template Generator!</h1>
 
@@ -170,10 +246,55 @@ TextGenerator::initialize();
             </div>
             <div class="jumbotron">
                 <h1>API example:</h1>
+
                 <p style="text-align: justify;">API secret: <?= TextGenerator::generateRandomString(30); ?></p>
+
                 <p style="text-align: justify;">Password: <?= TextGenerator::generateRandomString(12, true); ?></p>
             </div>
             <!--/row-->
+
+            <?php /**/ ?>
+            <div class="jumbotron">
+                <h1>User data generate:</h1>
+                <table class="table table-hover">
+                    <tr>
+                        <th>Picture</th>
+                        <th>First Name</th>
+                        <th>Second Name</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                        <th>Birthday</th>
+                        <th>Email</th>
+                        <th>Login</th>
+                        <th>Password</th>
+                    </tr>
+                    <?php
+                    for ($i = 0; $i < 25; $i++) {
+                        $gender = rand(0, 1) ? 'Male' : 'Female';
+                        $firstname = TextGenerator::generateFirstName($gender);
+                        $lastname = TextGenerator::generateLastName($gender);
+                        $age = TextGenerator::generateYearsOld(18, 68);
+                        $birthday = TextGenerator::generateBirthday($age);
+                        $email = TextGenerator::generateEmail($firstname, $lastname, $birthday);
+                        $login = TextGenerator::generateLogin($firstname, $lastname, $birthday);
+                        $password = TextGenerator::generateRandomString(12, true);
+                        ?>
+                        <tr>
+                            <td><img height="25" src="https://graph.facebook.com/<?=rand(500000,1000000);?>/picture?type=square" /></td>
+                            <td><?= $firstname ?></td>
+                            <td><?= $lastname ?></td>
+                            <td><?= $gender; ?></td>
+                            <td><?= $age; ?></td>
+                            <td><?= $birthday; ?></td>
+                            <td><?= $login.'@gmail.com'; ?></td>
+                            <td><?= $login; ?></td>
+                            <td><?= $password; ?></td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                </table>
+            </div>
         </div>
         <!--/.col-xs-12.col-sm-9-->
     </div>
