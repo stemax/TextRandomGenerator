@@ -24,7 +24,7 @@
 *generateLogin($firstname, $lastname, $birthday)* - Generate login (by firstname,lastname,birthday )
 
 
-##Example of fast using:
+## Example of using:
 ***
 
 ```php
