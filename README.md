@@ -1,5 +1,5 @@
 # TextRandomGenerator
-## Generate random sentences/headers/paswords/first(last) names/emails
+## Generate random sentences/headers/passwords/first(last) names/emails
 ***
 
 ## General methods:
@@ -11,7 +11,7 @@
 
 *generateRandomSentences($count_of_sentences = 5, $count_of_words = 0)* - Generate random sentences string
 
-*generateFirstName($gender = 'Male'* - Generate random First Name from file (by gender)
+*generateFirstName($gender = 'Male')* - Generate random First Name from file (by gender)
 
 *generateLastName($gender = 'Male')* - Generate random First Name from file (by gender)
 
