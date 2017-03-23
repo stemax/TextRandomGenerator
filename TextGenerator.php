@@ -3,7 +3,7 @@ namespace RandomText;
 
 class TextGenerator
 {
-    public static $lang, $words, $symbols, $symbols_pronouns, $question_words, $popular_verbs, $male_firstnames, $female_firstnames, $surnames;
+    public static $lang, $words, $symbols, $symbols_pronouns, $question_words, $popular_verbs, $male_firstnames, $female_firstnames, $surnames, $vincodes;
 
     /***
      * Loading words from language files
@@ -20,6 +20,7 @@ class TextGenerator
         self::$male_firstnames = explode("\n", file_get_contents($lang . '/male_firstnames.txt'));
         self::$female_firstnames = explode("\n", file_get_contents($lang . '/female_firstnames.txt'));
         self::$surnames = explode("\n", file_get_contents($lang . '/surnames.txt'));
+        self::$vincodes = explode("\n", file_get_contents($lang . '/vincodes.txt'));
     }
 
     /***
@@ -214,6 +215,14 @@ class TextGenerator
         }
         $login = strtolower(trim(substr($firstname, 0, 7)) . (rand(0, 1) ? '.' : '.') . trim((substr($lastname, 0, 9))) . (rand(0, 1) ? '.' : '.') . trim(str_replace('-', '', $birthday)));
         return $login;
+    }
+
+    /***
+     * Get random VinCode
+     */
+    public static function generateVinCode()
+    {
+            return strtoupper(self::$vincodes[rand(0, count(self::$vincodes) - 1)]);
     }
 
     /***

@@ -125,6 +125,10 @@ TextGenerator::initialize(isset($_REQUEST['lang']) ? $_REQUEST['lang'] : 'eng');
                     ?>
                 </table>
             </div>
+            <div class="jumbotron">
+                <h1>Car info example:</h1>
+                <p style="text-align: justify;">Vin code: <?= TextGenerator::generateVinCode(); ?></p>
+            </div>
         </div>
     </div>
     <hr>
